@@ -6,9 +6,10 @@ const express = require('express')
 const compression = require('compression')
 const logger = require('morgan')
 const favicon = require('serve-favicon')
-// const bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 // const helmet = require('helmet')
 const mongo = require('mongodb');
+const apiRoutes = require("./api-routes")
 
 const mongoClient = require('mongodb').MongoClient;
 const mongoQuestionsURL = "mongodb://localhost:27017";
@@ -23,6 +24,13 @@ app.use(compression())
 app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
 app.use(express.static(`${__dirname}/web`))
+
+app.use('/api', apiRoutes)
+
+app.use(bodyParser.urlencoded({
+   extended: true
+}))
+app.use(bodyParser.json())
 
 
 app.get('*', function(req, res) {
