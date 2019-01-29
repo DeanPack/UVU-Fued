@@ -16,6 +16,7 @@ mongoimport --db dbName --collection UVU-Fued --file questions.json --jsonArray
 ### Node modules/middleware
 ```
 npm install express
+npm install mongodb
 npm install compression
 npm install morgan
 npm install serve-favicon

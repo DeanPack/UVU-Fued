@@ -8,6 +8,10 @@ const logger = require('morgan')
 const favicon = require('serve-favicon')
 // const bodyParser = require('body-parser')
 // const helmet = require('helmet')
+const mongo = require('mongodb');
+
+const mongoClient = require('mongodb').MongoClient;
+const mongoQuestionsURL = "mongodb://localhost:27017";
 
 let app = express()
 
@@ -32,7 +36,13 @@ app.get('*', function(req, res) {
 
 //start the server
 const server = app.listen(8080, process.env.IP, 511, function() {
-  console.log(`Server listening on ${server.address().address}:${server.address().port}`); 
+	console.log(`Server listening on ${server.address().address}:${server.address().port}`); 
+
+	mongoClient.connect(mongoQuestionsURL, { useNewUrlParser: true }, function(err, db) {
+		if (err) throw err;
+		console.log("Connected to Database!");
+		db.close();
+});
 })
 
 //server close functions
