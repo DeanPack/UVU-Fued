@@ -38,8 +38,7 @@ app.get('*', function(req, res) {
 })
 
 
-// API Calls
-
+// API Calls will go in the api-routes.js file
 
 
 //start the server
