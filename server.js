@@ -8,13 +8,11 @@ const logger = require('morgan')
 const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
 // const helmet = require('helmet')
-const mongo = require('mongodb');
+
 const apiRoutes = require("./api-routes")
 
-const mongoClient = require('mongodb').MongoClient;
-const mongoQuestionsURL = "mongodb://localhost:27017";
-
 let app = express()
+
 
 //use the middleware
 app.use(logger('dev'))
@@ -25,41 +23,33 @@ app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
 app.use(express.static(`${__dirname}/web`))
 
+// API Calls will go in the api-routes.js file
 app.use('/api', apiRoutes)
 
 app.use(bodyParser.urlencoded({
-   extended: true
+	extended: true
 }))
 app.use(bodyParser.json())
 
-
 app.get('*', function(req, res) {
-  res.status(404).sendfile(`${__dirname}/web/404.html`)
+	res.status(404).sendfile(`${__dirname}/web/404.html`)
 })
-
-
-// API Calls will go in the api-routes.js file
 
 
 //start the server
 const server = app.listen(8080, process.env.IP, 511, function() {
-	console.log(`Server listening on ${server.address().address}:${server.address().port}`); 
+	console.log(`Server listening on ${server.address().address}:${server.address().port}`);
 
-	mongoClient.connect(mongoQuestionsURL, { useNewUrlParser: true }, function(err, db) {
-		if (err) throw err;
-		console.log("Connected to Database!");
-		db.close();
-});
 })
 
 //server close functions
 function gracefulShutdown() {
-  console.log()
-  console.log('Starting Shutdown ...\n')
-  server.close(function() {
-    console.log('Shutdown complete')
-    process.exit(0)
-  })
+	console.log()
+	console.log('Starting Shutdown ...\n')
+	server.close(function() {
+		console.log('Shutdown complete')
+		process.exit(0)
+	})
 }
 
 process.on('SIGTERM', gracefulShutdown)

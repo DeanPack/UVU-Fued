@@ -7,8 +7,9 @@ node server.js
 
 ## MongoDB Setup
 ```
-db.createCollection("UVU-Fued")
-mongoimport --db dbName --collection UVU-Fued --file questions.json --jsonArray
+use UVU-Fued
+db.createCollection("questions")
+mongoimport --db UVU-Fued --collection questions --file questions.json --jsonArray
 ```
 
 ## Dependancies
