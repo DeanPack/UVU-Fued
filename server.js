@@ -35,7 +35,6 @@ app.get('*', function(req, res) {
 	res.status(404).sendfile(`${__dirname}/web/404.html`)
 })
 
-
 //start the server
 const server = app.listen(8080, process.env.IP, 511, function() {
 	console.log(`Server listening on ${server.address().address}:${server.address().port}`);

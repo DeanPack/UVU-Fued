@@ -150,6 +150,53 @@ li > a {
     height: 120px;
     animation: spin 2s linear infinite;
 }
+.questionTable {
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.questionTable th {
+    background-color: #275D38;
+    color: white;
+}
+
+.questionTable, th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+}
+.questionTable, tr {
+ 	height: 68px;
+}
+	
+table.questionTable tr:nth-child(even) {
+	background-color: #dedede;
+}
+
+.filterField {
+	width: 98%;
+	font-size: 10px
+}
+
+.page-item.active .page-link {
+  background-color: #275D38;
+  border-color:#6F937A;
+}
+.page-item.disabled .page-link {
+  background-color: #eeeeee;
+  border-color:#c9c9c9;
+ 
+}
+.page-item .page-link {
+  color: #000;
+ 
+}
+.actionButton {
+	margin-right: 25px;
+	cursor: pointer;
+	font-size:34px;
+}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
