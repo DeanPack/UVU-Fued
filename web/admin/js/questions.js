@@ -47,10 +47,10 @@ function changeToReadable(header, data) {
 		return data['question'];
 	}
 	if (header === "Actions") {
-		return `<i class='fa fa-pencil actionButton' data-toggle='modal' data-target='#notesModal${data['_id']}'></i> <i class='fa fa-times actionButton' data-toggle='modal' data-target='#notesModal${data['_id']}' style='color:red;'></i>`;
+		return `<i class='fa fa-pencil actionButton' data-toggle='modal' data-target='#editModal${data['_id']}'></i> <i class='fa fa-times actionButton' data-toggle='modal' data-target='#deleteModal${data['_id']}' style='color:red;'></i>`;
 	}
 
-	return " ";
+	return "";
 }
 
 function buildHtmlTable(headerArray, dataArray, div) {

@@ -36,7 +36,7 @@ main {
 }
 
 #mainTableDivCenter {
-  margin: 25px auto auto auto;
+  margin: 5px auto auto auto;
   
 }
 
@@ -196,6 +196,9 @@ table.questionTable tr:nth-child(even) {
 	margin-right: 25px;
 	cursor: pointer;
 	font-size:34px;
+}
+.searchbar{
+	margin-top: 5px;
 }
 
 @keyframes spin {
