@@ -24,14 +24,14 @@ route.get('/', function (req, res) {
     })
 })
 
-// Returns all Questions
+// Return all Questions
 route.get('/questions', function (req, res) {
 	database.collection('questions').find().toArray( (err, results) => {
 		res.send(results)
     })
 })
 
-// Search for question by id
+// Get question by id
 route.get('/question', function (req, res) {
 	let query = { _id: ObjectId(req['query']['id']) }
 	database.collection('questions').find(query).toArray( (err, results) => {
@@ -84,6 +84,11 @@ route.put('/questions/new/', function (req, res) {
 
 // Update question
 route.post('/questions', function (req, res) {
+
+})
+
+// Delete question
+route.delete('/question', function (req, res) {
 
 })
 

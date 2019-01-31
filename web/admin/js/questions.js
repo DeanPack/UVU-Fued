@@ -5,50 +5,94 @@ let maxPages = 0
 const howManyPerPage = 10
 const maxPaginationButtons = 5
 
-let tableHeaders = ["Question","Answer - Points","Actions"]
-let tableData
 let jsonURL = `../api/questions/`
 
-	function loadDynamicContentModal(modal,id) {
-		console.log(id)
-		var options = {
-			modal : true
+let urlParams = new URLSearchParams(window.location.search)
+let searchTerm = urlParams.get('search')
+
+if (searchTerm)
+{
+	jsonURL = `../api/questions/search?searchby=${searchTerm}`
+}
+
+let tableHeaders = ["Question","Answer - Points","Actions"]
+let tableData
+
+
+function loadEditModal(modal,id) {
+	console.log(id)
+
+	$.ajax({
+		url : `../api/question/modal?id=${id}`,
+		type : 'GET',
+		dataType:'html',
+		success : function(data) {              
+			let divContainer = document.getElementById(modal)
+			divContainer.innerHTML = data
+			$('#editModal').modal({
+				show : true
+			})
 		}
+	})
+}
+
+function deleteQuestionModal(id) {
+	console.log(id)
 	
-		$.ajax({
-			url : `../api/question/modal?id=${id}`,
-			type : 'GET',
-			dataType:'html',
-			success : function(data) {              
-				let divContainer = document.getElementById(modal)
-				divContainer.innerHTML = data
-				$('#editModal').modal({
-					show : true
-				})
-			}
-		})
-	}
+	let deleteButton = `<button type="button" class="btn btn-danger" onclick="deleteQuestion('${id}')" >Delete</button>`
+            
+	let divContainer = document.getElementById("deleteModalFooter")
+	divContainer.innerHTML += deleteButton
+	
+	$('#deleteModal').modal({
+		show : true
+	})
+	
+
+}
+
+function deleteQuestion(id){
+	console.log(`Delete ${id}`);
+	$('#deleteModalFooter').children().last().remove();
+	
+	// Hide the modal once the question has been deleted
+	$('#deleteModal').modal('hide');
+}
+
+function saveUpdatedQuestion(){
+	console.log(`Save`);
+	
+	$('#editModal').modal('hide');
+}
+
+function saveNewQuestion(){
+	console.log(`Save New Question`);
+	
+	$('#newQuestionModal').modal('hide');
+}
+
 
 $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip()
+	
+	if (searchTerm){
+		$('#searchBar').val(searchTerm)
+	}
 
-
-		let divContainer = document.getElementById("mainTableDivCenter")
+	let divContainer = document.getElementById("mainTableDivCenter")
 		divContainer.innerHTML = "<div class='loader'></div>"
 		
-		$.ajax({
-			url : jsonURL,
-			type : 'GET',
-			dataType:'json',
-			success : function(data) {              
-				
-				tableData = data
-				buildHtmlTable(tableHeaders, data, "mainTableDiv")
+	$.ajax({
+		url : jsonURL,
+		type : 'GET',
+		dataType:'json',
+		success : function(data) {              
+			tableData = data
+			buildHtmlTable(tableHeaders, data, "mainTableDiv")
     	},
-		error : function(request,error)
-						{
-			let divContainer = document.getElementById("mainTableDiv")
-			divContainer.innerHTML += "Something went wrong!"
+		error : function(request,error){
+		let divContainer = document.getElementById("mainTableDiv")
+		divContainer.innerHTML += "Something went wrong!"
     	}
 	})
 })
@@ -66,8 +110,7 @@ function changeToReadable(header, data) {
 		return data['question']
 	}
 	if (header === "Actions") {
-		return `<i class='fa fa-pencil actionButton' onclick="loadDynamicContentModal('modalEditBody', '${data['_id']}')"></i> <i class='fa fa-times actionButton' data-toggle='modal' data-target='#deleteModal${data['_id']}' style='color:red;'></i>`
-		//return `<a class='fa fa-pencil actionButton' href="javascript:void(0);" data-href="..api/question/id"></a>`
+		return `<i class='fa fa-pencil actionButton' onclick="loadEditModal('modalEditBody', '${data['_id']}')"></i> <i class="fa fa-times actionButton" onclick="deleteQuestionModal('${data['_id']}')" style="color:red;"></i>`
 	}
 
 	return ""
