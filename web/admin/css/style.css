@@ -205,3 +205,9 @@ table.questionTable tr:nth-child(even) {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+.editBoxes {
+    margin-top: 5px;
+}
+.titleBox{
+	border: 0;
+}

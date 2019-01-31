@@ -1,20 +1,40 @@
 //start on page 0 i.e. human page 1
-let pageNum = 0;
-let maxPages = 0;
+let pageNum = 0
+let maxPages = 0
 
-const howManyPerPage = 10;
-const maxPaginationButtons = 5;
+const howManyPerPage = 10
+const maxPaginationButtons = 5
 
-let tableHeaders = ["Question","Answer - Points","Actions"];
-let tableData;
-let jsonURL = `../api/questions/`;
+let tableHeaders = ["Question","Answer - Points","Actions"]
+let tableData
+let jsonURL = `../api/questions/`
+
+	function loadDynamicContentModal(modal,id) {
+		console.log(id)
+		var options = {
+			modal : true
+		}
+	
+		$.ajax({
+			url : `../api/question/modal?id=${id}`,
+			type : 'GET',
+			dataType:'html',
+			success : function(data) {              
+				let divContainer = document.getElementById(modal)
+				divContainer.innerHTML = data
+				$('#editModal').modal({
+					show : true
+				})
+			}
+		})
+	}
 
 $(document).ready(function() {
-	$('[data-toggle="tooltip"]').tooltip();
-	
+	$('[data-toggle="tooltip"]').tooltip()
 
-		let divContainer = document.getElementById("mainTableDivCenter");
-		divContainer.innerHTML = "<div class='loader'></div>";
+
+		let divContainer = document.getElementById("mainTableDivCenter")
+		divContainer.innerHTML = "<div class='loader'></div>"
 		
 		$.ajax({
 			url : jsonURL,
@@ -22,169 +42,168 @@ $(document).ready(function() {
 			dataType:'json',
 			success : function(data) {              
 				
-				tableData = data;
-				buildHtmlTable(tableHeaders, data, "mainTableDiv");
+				tableData = data
+				buildHtmlTable(tableHeaders, data, "mainTableDiv")
     	},
 		error : function(request,error)
 						{
-			let divContainer = document.getElementById("mainTableDiv");
-			divContainer.innerHTML += "Something went wrong!";
+			let divContainer = document.getElementById("mainTableDiv")
+			divContainer.innerHTML += "Something went wrong!"
     	}
-	});
-});
+	})
+})
 
 function changeToReadable(header, data) {
 	if (header === "Answer - Points") {
-		let text = "";
+		let text = ""
 
 		for (awn in data['answer']){
-			console.log(awn)
 			text += `${data['answer'][awn]['text']} - ${data['answer'][awn]['pts']}<br>`
 		}
-		return text;
+		return text
 	}
 	if (header === "Question") {
-		return data['question'];
+		return data['question']
 	}
 	if (header === "Actions") {
-		return `<i class='fa fa-pencil actionButton' data-toggle='modal' data-target='#editModal${data['_id']}'></i> <i class='fa fa-times actionButton' data-toggle='modal' data-target='#deleteModal${data['_id']}' style='color:red;'></i>`;
+		return `<i class='fa fa-pencil actionButton' onclick="loadDynamicContentModal('modalEditBody', '${data['_id']}')"></i> <i class='fa fa-times actionButton' data-toggle='modal' data-target='#deleteModal${data['_id']}' style='color:red;'></i>`
+		//return `<a class='fa fa-pencil actionButton' href="javascript:void(0);" data-href="..api/question/id"></a>`
 	}
 
-	return "";
+	return ""
 }
 
 function buildHtmlTable(headerArray, dataArray, div) {
 
-	let table = document.createElement("table");
-	table.setAttribute("class", "questionTable");
-	table.setAttribute("id", "questionTable");
+	let table = document.createElement("table")
+	table.setAttribute("class", "questionTable")
+	table.setAttribute("id", "questionTable")
 
-	tr = table.insertRow(-1);
+	tr = table.insertRow(-1)
 	for (let i = 0; i < tableHeaders.length; i++) {
 		// Col Titles
-		let th = document.createElement("th");
-		th.innerHTML = tableHeaders[i];
-		tr.appendChild(th);
+		let th = document.createElement("th")
+		th.innerHTML = tableHeaders[i]
+		tr.appendChild(th)
 	}
 	// If the data is less than 10 rows then use the array length
-	let rows = howManyPerPage;
+	let rows = howManyPerPage
 	if (dataArray.length < howManyPerPage) {
-		rows = dataArray.length;
+		rows = dataArray.length
 	}
 	// Create the Rows
 	for (let i = 0; i < rows; i++) {
-		tr = table.insertRow(-1);
+		tr = table.insertRow(-1)
 		for (let j = 0; j < tableHeaders.length; j++) {
-			let tabCell = tr.insertCell(-1);
-			tabCell.innerHTML = changeToReadable(tableHeaders[j], dataArray[i]);
+			let tabCell = tr.insertCell(-1)
+			tabCell.innerHTML = changeToReadable(tableHeaders[j], dataArray[i])
 		}
 	}
-	let divContainer = document.getElementById(div);
-	divContainer.innerHTML = "";
-	divContainer.appendChild(table);
+	let divContainer = document.getElementById(div)
+	divContainer.innerHTML = ""
+	divContainer.appendChild(table)
 	// Table has been created let check to see if we need pagination
 	if (dataArray.length > howManyPerPage) {
-		maxPages = Math.ceil((dataArray.length / howManyPerPage)) - 1;
-		createPaginationButtons(dataArray.length);
+		maxPages = Math.ceil((dataArray.length / howManyPerPage)) - 1
+		createPaginationButtons(dataArray.length)
 	}
 }
 
 function createPaginationButtons(numOfItems) {
-	let content = "<div id='paginationButtons'>";
-	content += "	<nav aria-label='pagination'>";
-	content += "		<ul id='paginationItems' class='pagination pagination-sm justify-content-end' style='margin:15px 0'>";
-	content += "		    <li class='page-item disabled'><a class='page-link' href='#' tabindex='-1' onclick='paginationClick(this); return false';>Previous</a></li>";
-	content += "		    <li class='page-item active'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>1</a></li>";
+	let content = "<div id='paginationButtons'>"
+	content += "	<nav aria-label='pagination'>"
+	content += "		<ul id='paginationItems' class='pagination pagination-sm justify-content-end' style='margin:15px 0'>"
+	content += "		    <li class='page-item disabled'><a class='page-link' href='#' tabindex='-1' onclick='paginationClick(this); return false';>Previous</a></li>"
+	content += "		    <li class='page-item active'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>1</a></li>"
 	if (maxPages > maxPaginationButtons) {
-		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>2</a></li>";
-		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>3</a></li>";
-		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>4</a></li>";
-		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>5</a></li>";
+		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>2</a></li>"
+		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>3</a></li>"
+		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>4</a></li>"
+		content += "		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>5</a></li>"
 	} else {
 		for (let i = 0; i < maxPages; i++) {
-			content += `		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>${(i + 2)}</a></li>`;
+			content += `		    <li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>${(i + 2)}</a></li>`
 		}
 	}
-	content += "    		<li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>Next</a></li>";
-	content += "		</ul>";
-	content += "	</nav>";
-	content += "</div>";
-	let divAfterTable = document.getElementById("mainTableDiv");
-	divAfterTable.insertAdjacentHTML('afterend', content);
+	content += "    		<li class='page-item'><a class='page-link' href='#' onclick='paginationClick(this); return false;'>Next</a></li>"
+	content += "		</ul>"
+	content += "	</nav>"
+	content += "</div>"
+	let divAfterTable = document.getElementById("mainTableDiv")
+	divAfterTable.insertAdjacentHTML('afterend', content)
 }
 
 function updateTable(data, tableID, tableHeaders, page) {
-	let table = document.getElementById(tableID);
+	let table = document.getElementById(tableID)
 	for (let i = 1, row; row = table.rows[i]; i++) { // Start on row 1
 		for (let j = 0, col; col = row.cells[j]; j++) {
-			let arrayIndex = ((i - 1) + (page * howManyPerPage));
+			let arrayIndex = ((i - 1) + (page * howManyPerPage))
 			
 			if(arrayIndex < data.length){
-				col.innerHTML = changeToReadable(table.rows[0].cells[j].innerHTML, data[arrayIndex]);
+				col.innerHTML = changeToReadable(table.rows[0].cells[j].innerHTML, data[arrayIndex])
 			}else{
-				col.innerHTML = "";
+				col.innerHTML = ""
 			}
 		}
 	}
 }
 
 function paginationClick(ele) {
-	let pageinationButtons = document.getElementById("paginationItems").getElementsByTagName("li");
-	
+	let pageinationButtons = document.getElementById("paginationItems").getElementsByTagName("li")
 	
 	if (ele.innerHTML === "Next") {
 		if (pageNum < maxPages) {
-			pageNum++;
+			pageNum++
 		}
 		if (pageinationButtons[pageinationButtons.length - 2].classList.contains("active")){
 			for (let i = 1; i < pageinationButtons.length - 1; i++){
-				let newLabel = (parseInt(pageinationButtons[i].getElementsByTagName("a")[0].innerHTML)) + 1;
-				pageinationButtons[i].getElementsByTagName("a")[0].innerHTML = newLabel;
+				let newLabel = (parseInt(pageinationButtons[i].getElementsByTagName("a")[0].innerHTML)) + 1
+				pageinationButtons[i].getElementsByTagName("a")[0].innerHTML = newLabel
 			}
 		}
 	}
 	if (ele.innerHTML === "Previous") {
 		if (pageNum !== 0) {
-			pageNum--;
+			pageNum--
 		}
 		
 		if (pageinationButtons[1].classList.contains("active")){
 			for (let i = 1; i < pageinationButtons.length - 1; i++){
-				let newLabel = (parseInt(pageinationButtons[i].getElementsByTagName("a")[0].innerHTML)) - 1;
-				pageinationButtons[i].getElementsByTagName("a")[0].innerHTML = newLabel;
+				let newLabel = (parseInt(pageinationButtons[i].getElementsByTagName("a")[0].innerHTML)) - 1
+				pageinationButtons[i].getElementsByTagName("a")[0].innerHTML = newLabel
 			}
 		}
 	}
 	
 	if (ele.innerHTML !== "Previous" && ele.innerHTML !== "Next")
 	{
-		let pageNumber = parseInt(ele.innerHTML) - 1;
+		let pageNumber = parseInt(ele.innerHTML) - 1
 		
 		if (pageNumber <= maxPages){
-			pageNum = pageNumber;
+			pageNum = pageNumber
 		}
 	}
 	
 	if (pageNum < maxPages) {
-		pageinationButtons[0].classList.remove("disabled");
-		pageinationButtons[pageinationButtons.length - 1].classList.remove("disabled");
+		pageinationButtons[0].classList.remove("disabled")
+		pageinationButtons[pageinationButtons.length - 1].classList.remove("disabled")
 	}
 	if (pageNum === 0) {
-		pageinationButtons[0].classList.add("disabled");
+		pageinationButtons[0].classList.add("disabled")
 	}
 	if (pageNum === maxPages) {
-		pageinationButtons[pageinationButtons.length - 1].classList.add("disabled");
-		pageinationButtons[0].classList.remove("disabled");
+		pageinationButtons[pageinationButtons.length - 1].classList.add("disabled")
+		pageinationButtons[0].classList.remove("disabled")
 	}
 	
 	for (let i = 1; i < pageinationButtons.length - 1; i++){
 		
 		if ((parseInt(pageinationButtons[i].getElementsByTagName("a")[0].innerHTML) - 1) === pageNum){
-			pageinationButtons[i].classList.add("active");
+			pageinationButtons[i].classList.add("active")
 		}else{
-			pageinationButtons[i].classList.remove("active");
+			pageinationButtons[i].classList.remove("active")
 		}
 	}
 	
-	updateTable(tableData, "questionTable", tableHeaders, pageNum);
+	updateTable(tableData, "questionTable", tableHeaders, pageNum)
 }

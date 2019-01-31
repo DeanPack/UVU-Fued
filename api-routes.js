@@ -4,6 +4,7 @@ const mongo = require('mongodb');
 
 const MongoClient = require('mongodb').MongoClient;
 const mongoQuestionsURL = "mongodb://localhost:27017/UVU-Fued"
+const ObjectId = require('mongodb').ObjectID;
 
 let database
 
@@ -27,6 +28,47 @@ route.get('/', function (req, res) {
 route.get('/questions', function (req, res) {
 	database.collection('questions').find().toArray( (err, results) => {
 		res.send(results)
+    })
+})
+
+// Search for question by id
+route.get('/question', function (req, res) {
+	let query = { _id: ObjectId(req['query']['id']) }
+	database.collection('questions').find(query).toArray( (err, results) => {
+		res.send(results)
+    })
+})
+
+// Search for question by id return HTML for modal
+route.get('/question/modal', function (req, res) {
+	let query = { _id: ObjectId(req['query']['id']) }
+	database.collection('questions').find(query).toArray( (err, results) => {
+		console.log(results[0]['answer'])
+		let returnString = `<div class="input-group editBoxes">`
+		returnString += `<div class="input-group-prepend">`
+		returnString += `<span class="input-group-text">Question: </span></div>`
+		
+		returnString += `<textarea class="form-control" aria-label="Question: ">${results[0]['question']}</textarea>`
+		returnString += `</div>`
+		
+		returnString += `<div class="input-group editBoxes">`
+		returnString += `<input type="text" class="form-control titleBox" onfocus="this.blur();" readonly value="Answer"/>`
+    	returnString += `<span class="input-group-text">-</span>`
+    	returnString += `<input type="text" class="form-control titleBox" onfocus="this.blur();" readonly value="Points"/>`
+    	returnString += `</div>`
+
+		for (let i = 0; i < results[0]['answer'].length; i++) {
+			console.log(results[0]['answer'][i])
+			returnString += `<div class="input-group editBoxes">`
+			returnString += `<input type="text" class="form-control" value="${results[0]['answer'][i]['text']}"/>`
+    		returnString += `<span class="input-group-text">-</span>`
+    		returnString += `<input type="text" class="form-control" value="${results[0]['answer'][i]['pts']}"/>`
+    		returnString += `</div>`
+		}
+
+		returnString += `</div>`
+
+		res.send(returnString)
     })
 })
 
