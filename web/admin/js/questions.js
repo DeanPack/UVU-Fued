@@ -29,6 +29,11 @@ function loadEditModal(modal,id) {
 		success : function(data) {              
 			let divContainer = document.getElementById(modal)
 			divContainer.innerHTML = data
+			
+			let saveButton = `<button type="button" class="btn btn-primary" onclick="saveUpdatedQuestion('${id}')">Save</button>`
+			let divButtonContainer = document.getElementById("updateModalFooter")
+			divButtonContainer.innerHTML += saveButton
+			
 			$('#editModal').modal({
 				show : true
 			})
@@ -43,34 +48,55 @@ function deleteQuestionModal(id) {
             
 	let divContainer = document.getElementById("deleteModalFooter")
 	divContainer.innerHTML += deleteButton
-	
+    
 	$('#deleteModal').modal({
 		show : true
 	})
 	
 
 }
-
+//DEAN
 function deleteQuestion(id){
 	console.log(`Delete ${id}`);
 	$('#deleteModalFooter').children().last().remove();
-	
+	$.ajax({
+		url : `../api/question?id=${id}`,
+		type : 'DELETE',
+		dataType:'html',
+		success : function(data) {              
+			let divContainer = document.getElementById(modal)
+			divContainer.innerHTML = data
+			$('#editModal').modal({
+				show : true
+			})
+		}
+	})
 	// Hide the modal once the question has been deleted
 	$('#deleteModal').modal('hide');
 }
 
-function saveUpdatedQuestion(){
-	console.log(`Save`);
-	
+function saveUpdatedQuestion(id){
+	console.log(`Save ${id}`);
+/*
+	$.ajax({
+		url : `../api/questions?id=${id}`,
+		type : 'POST',
+		dataType:'html',
+		success : function(data) {              
+		}
+	})
+*/
+
+	// Close the modal and remove the specific save button after the question has been updated from the database
 	$('#editModal').modal('hide');
+	$('#updateModalFooter').children().last().remove();
 }
 
 function saveNewQuestion(){
 	console.log(`Save New Question`);
-	
 	$('#newQuestionModal').modal('hide');
 }
-
+//DEAN
 
 $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip()
