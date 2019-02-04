@@ -73,6 +73,7 @@ function deleteQuestion(id){
 	})
 	// Hide the modal once the question has been deleted
 	$('#deleteModal').modal('hide');
+	location.reload()
 }
 
 function saveUpdatedQuestion(id){

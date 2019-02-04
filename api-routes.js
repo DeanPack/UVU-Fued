@@ -74,7 +74,11 @@ route.get('/question/modal', function (req, res) {
 
 // Search for question
 route.get('/questions/search', function (req, res) {
-
+	let query = { question: new RegExp(`^${req['query']['searchby']}`, 'i') }
+	console.log(query)
+	database.collection('questions').find(query).toArray( (err, results) => {
+		res.send(results)
+    })
 })
 
 // Create a new question
