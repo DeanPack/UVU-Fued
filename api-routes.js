@@ -89,7 +89,12 @@ route.post('/questions', function (req, res) {
 
 // Delete question
 route.delete('/question', function (req, res) {
-
+var myquery = { _id: ObjectId(req['query']['id']) }
+  database.collection("questions").deleteOne(myquery, function(err, obj) {
+    if (err) 
+        throw err
+    console.log("1 question deleted")
+})
 })
 
 module.exports = route

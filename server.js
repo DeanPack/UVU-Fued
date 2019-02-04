@@ -41,6 +41,8 @@ const server = app.listen(8080, process.env.IP, 511, function() {
 
 })
 
+
+
 //server close functions
 function gracefulShutdown() {
 	console.log()
