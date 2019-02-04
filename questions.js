@@ -70,9 +70,20 @@ function deleteQuestion(id){
 	$('#deleteModal').modal('hide');
 }
 
-function saveUpdatedQuestion(){
+function saveUpdatedQuestion(id){
 	console.log(`Save`);
-	
+		$.ajax({
+		url : `../api/questions?id=${id}`,
+		type : 'POST',
+		dataType:'html',
+		success : function(data) {              
+			let divContainer = document.getElementById(modal)
+			divContainer.innerHTML = data
+			$('#editModal').modal({
+				show : true
+			})
+		}
+	})
 	$('#editModal').modal('hide');
 }
 
