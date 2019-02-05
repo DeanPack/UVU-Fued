@@ -21,6 +21,10 @@ let tableData
 
 function loadEditModal(modal,id) {
 	console.log(id)
+	
+	if ($('#updateModalFooter').children().last().hasClass("btn-primary")){
+		$('#updateModalFooter').children().last().remove()
+	}
 
 	$.ajax({
 		url : `../api/question/modal?id=${id}`,
@@ -45,6 +49,10 @@ function deleteQuestionModal(id) {
 	console.log(id)
 	
 	let deleteButton = `<button type="button" class="btn btn-danger" onclick="deleteQuestion('${id}')" >Delete</button>`
+	
+	if ($('#deleteModalFooter').children().last().hasClass("btn-danger")){
+		$('#deleteModalFooter').children().last().remove()
+	}
             
 	let divContainer = document.getElementById("deleteModalFooter")
 	divContainer.innerHTML += deleteButton
@@ -53,9 +61,8 @@ function deleteQuestionModal(id) {
 		show : true
 	})
 	
-
 }
-//DEAN
+
 function deleteQuestion(id){
 	console.log(`Delete ${id}`);
 	$('#deleteModalFooter').children().last().remove();
@@ -72,59 +79,57 @@ function deleteQuestion(id){
 		}
 	})
 	// Hide the modal once the question has been deleted
-	$('#deleteModal').modal('hide');
+	$('#deleteModal').modal('hide')
 	location.reload()
 }
 
 function saveUpdatedQuestion(id){
 	console.log(`Save ${id}`);
-    let questionJSON = getQuestionJSON("modalEditBody");
-    questionJSON["_id"]=id;
-    var jsonString = JSON.stringify(questionJSON)
+    let questionJSON = getQuestionJSON("modalEditBody", id)
+
 	$.ajax({
 		url : `../api/questions`,
-        data : jsonString,
 		type : 'POST',
-        contentType: "application/json",
 		dataType:'json',
+		data: questionJSON,
+		success : function(data) {
+			// Close the modal and remove the specific save button after the question has been updated from the database              
+			$('#editModal').modal('hide')
+			$('#updateModalFooter').children().last().remove()
+			location.reload()
+		}
 	})
-
-	// Close the modal and remove the specific save button after the question has been updated from the database
-	$('#editModal').modal('hide');
-	$('#updateModalFooter').children().last().remove();
 }
 
 function saveNewQuestion(){
-	console.log(`Save New Question`);
-	$('#newQuestionModal').modal('hide');
+	console.log(`Save New Question`)
+	$('#newQuestionModal').modal('hide')
 }
 
-function getQuestionJSON(modal)
+function getQuestionJSON(modal, id)
 {
     var questionJSON = {};
     //get the main div
-
+	questionJSON['_id'] = id
 
     //get the question
-    questionJSON["question"] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].innerHTML;
-    console.log("HI")
+    questionJSON['question'] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].value;
     //start at two to skip headers
-    var answerArray=[];
+    var answerArray = [];
     var divs = document.getElementById(modal).getElementsByTagName('div');
-    for(i=2; i<divs.length; i++)
+    for(i = 3; i < divs.length; i++)
     {
         var inputs = divs[i].getElementsByTagName('input');
         var answer = {}
         //answer
-        answer["text"] = inputs[0].value;
+        answer['text'] = inputs[0].value;
         //points
-        answer["points"] = inputs[1].value;
+        answer['pts'] = inputs[1].value;
         answerArray.push(answer);
     }
-    questionJSON["answers"] = answerArray;
+    questionJSON['answer'] = answerArray;
     return questionJSON;
 }
-//DEAN
 
 $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip()

@@ -39,11 +39,10 @@ route.get('/question', function (req, res) {
     })
 })
 
-// Search for question by id return HTML for modal
+// Get question by id return HTML for modal
 route.get('/question/modal', function (req, res) {
 	let query = { _id: ObjectId(req['query']['id']) }
 	database.collection('questions').find(query).toArray( (err, results) => {
-		console.log(results[0]['answer'])
 		let returnString = `<div class="input-group editBoxes">`
 		returnString += `<div class="input-group-prepend">`
 		returnString += `<span class="input-group-text">Question: </span></div>`
@@ -58,7 +57,6 @@ route.get('/question/modal', function (req, res) {
     	returnString += `</div>`
 
 		for (let i = 0; i < results[0]['answer'].length; i++) {
-			console.log(results[0]['answer'][i])
 			returnString += `<div class="input-group editBoxes">`
 			returnString += `<input type="text" class="form-control" value="${results[0]['answer'][i]['text']}"/>`
     		returnString += `<span class="input-group-text">-</span>`
@@ -75,7 +73,6 @@ route.get('/question/modal', function (req, res) {
 // Search for question
 route.get('/questions/search', function (req, res) {
 	let query = { question: new RegExp(`^${req['query']['searchby']}`, 'i') }
-	console.log(query)
 	database.collection('questions').find(query).toArray( (err, results) => {
 		res.send(results)
     })
@@ -93,9 +90,18 @@ var myobj = { name: "Company Inc", address: "Highway 37" };
 
 // Update question
 route.post('/questions', function (req, res) {
-    console.log(req.body)
-    database.collection("questions").replaceOne({"_id": req.body["id"]},{$set: req.body})
-    console.log("1 document updated")
+	// We need to query to find the old question before updating it. Once we get the old question we then can use those restuls to update the question
+	let query = { _id: ObjectId(req['body']['_id']) }
+
+	database.collection('questions').find(query).toArray( (err, results) => {
+		// Safer to remove the ID so we dont change that by accident
+		let updateData = req['body']
+    	delete updateData['_id']
+
+	 	database.collection('questions').updateOne(results[0], {'$set': updateData}, (err, newResults) => {
+	 		res.send(newResults)
+     	})
+    })
 })
 
 // Delete question
