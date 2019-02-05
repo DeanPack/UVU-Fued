@@ -46,8 +46,6 @@ function loadEditModal(modal,id) {
 }
 
 function deleteQuestionModal(id) {
-	console.log(id)
-	
 	let deleteButton = `<button type="button" class="btn btn-danger" onclick="deleteQuestion('${id}')" >Delete</button>`
 	
 	if ($('#deleteModalFooter').children().last().hasClass("btn-danger")){
@@ -60,7 +58,6 @@ function deleteQuestionModal(id) {
 	$('#deleteModal').modal({
 		show : true
 	})
-	
 }
 
 function deleteQuestion(id){
@@ -71,16 +68,11 @@ function deleteQuestion(id){
 		type : 'DELETE',
 		dataType:'html',
 		success : function(data) {              
-			let divContainer = document.getElementById(modal)
-			divContainer.innerHTML = data
-			$('#editModal').modal({
-				show : true
-			})
+			// Hide the modal once the question has been deleted
+			$('#deleteModal').modal('hide')
+			location.reload()
 		}
 	})
-	// Hide the modal once the question has been deleted
-	$('#deleteModal').modal('hide')
-	location.reload()
 }
 
 function saveUpdatedQuestion(id){
