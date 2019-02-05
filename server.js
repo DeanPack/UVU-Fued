@@ -23,13 +23,14 @@ app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
 app.use(express.static(`${__dirname}/web`))
 
-// API Calls will go in the api-routes.js file
-app.use('/api', apiRoutes)
 
 app.use(bodyParser.urlencoded({
 	extended: true
 }))
 app.use(bodyParser.json())
+
+// API Calls will go in the api-routes.js file AND MUST BE AFTER THE PARSERS
+app.use('/api', apiRoutes)
 
 app.get('*', function(req, res) {
 	res.status(404).sendfile(`${__dirname}/web/404.html`)

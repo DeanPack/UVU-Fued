@@ -86,14 +86,16 @@ route.put('/questions/new/', function (req, res) {
 var myobj = { name: "Company Inc", address: "Highway 37" };
   database.collection("questions").insertOne(myobj, function(err, res) {
     if (err) 
-        throw err;
+        throw err
     database.log("1 question inserted");
   });
 })
 
 // Update question
 route.post('/questions', function (req, res) {
-
+    console.log(req.body)
+    database.collection("questions").replaceOne({"_id": req.body["id"]},{$set: req.body})
+    console.log("1 document updated")
 })
 
 // Delete question

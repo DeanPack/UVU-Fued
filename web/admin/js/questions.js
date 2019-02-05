@@ -78,15 +78,16 @@ function deleteQuestion(id){
 
 function saveUpdatedQuestion(id){
 	console.log(`Save ${id}`);
-/*
+    let questionJSON = getQuestionJSON("modalEditBody");
+    questionJSON["_id"]=id;
+    var jsonString = JSON.stringify(questionJSON)
 	$.ajax({
-		url : `../api/questions?id=${id}`,
+		url : `../api/questions`,
+        data : jsonString,
 		type : 'POST',
-		dataType:'html',
-		success : function(data) {              
-		}
+        contentType: "application/json",
+		dataType:'json',
 	})
-*/
 
 	// Close the modal and remove the specific save button after the question has been updated from the database
 	$('#editModal').modal('hide');
@@ -96,6 +97,32 @@ function saveUpdatedQuestion(id){
 function saveNewQuestion(){
 	console.log(`Save New Question`);
 	$('#newQuestionModal').modal('hide');
+}
+
+function getQuestionJSON(modal)
+{
+    var questionJSON = {};
+    //get the main div
+
+
+    //get the question
+    questionJSON["question"] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].innerHTML;
+    console.log("HI")
+    //start at two to skip headers
+    var answerArray=[];
+    var divs = document.getElementById(modal).getElementsByTagName('div');
+    for(i=2; i<divs.length; i++)
+    {
+        var inputs = divs[i].getElementsByTagName('input');
+        var answer = {}
+        //answer
+        answer["text"] = inputs[0].value;
+        //points
+        answer["points"] = inputs[1].value;
+        answerArray.push(answer);
+    }
+    questionJSON["answers"] = answerArray;
+    return questionJSON;
 }
 //DEAN
 
