@@ -105,55 +105,61 @@
     </div>
 </div>
 </div>
-<!-- New Modal -->
-<div class="modal" id="newQuestionModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">New Question</h4><button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <!-- Modal body -->
-            <div id="modalCreateBody" class="modal-body">
-               <div class="input-group editBoxes">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Question:</span>
+    <div class="modal show" id="newQuestionModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+
+                <div class="modal-header">
+                    <h4 class="modal-title">New Question</h4><button type="button" class="close" data-dismiss="modal">×</button>
+                </div><!-- Modal body -->
+
+                <div id="modalCreateBody" class="modal-body">
+                    <div class="input-group editBoxes">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Question:</span>
+                        </div>
+                        <textarea class="form-control" aria-label="Question: "></textarea>
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+
+                    <div class="input-group editBoxes">
+                        <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
+                    </div>
+                </div><!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button> <button type="button" class="btn btn-primary" onclick="saveNewQuestion()">Save</button>
                 </div>
-                <textarea class="form-control" aria-label="Question: "></textarea>
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
-            </div>
-            <div class="input-group editBoxes">
-                <input type="text" class="form-control" placeholder="Answer"><span class="input-group-text">-</span><input type="text" class="form-control" placeholder="Points">
             </div>
         </div>
-        <!-- Modal footer -->
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" onclick="saveNewQuestion()"">Save</button>
-            </div>
-            </div>
-            </div>
-            </div>
-            </body>
-            <script src="js/questions.js"></script>
-            </html>
+    </div>
+</body>
+<script src="js/questions.js"></script>
+</html>

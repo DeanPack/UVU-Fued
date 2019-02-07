@@ -79,13 +79,10 @@ route.get('/questions/search', function (req, res) {
 })
 
 // Create a new question
-route.put('/questions/new/', function (req, res) {
-var myobj = { name: "Company Inc", address: "Highway 37" };
-  database.collection("questions").insertOne(myobj, function(err, res) {
-    if (err) 
-        throw err
-    database.log("1 question inserted");
-  });
+route.put('/questions/', function (req, res) {
+  	database.collection('questions').insertOne(req['body'], (err, results) => {
+		res.send(results)
+    })
 })
 
 // Update question
@@ -108,8 +105,6 @@ route.post('/questions', function (req, res) {
 route.delete('/question', function (req, res) {
 	let query = { _id: ObjectId(req['query']['id']) }
   	database.collection("questions").deleteOne(query, function(err, results) {
-    	if (err) 
-        	throw err
     	console.log("1 question deleted")
     	res.send(results)
 	})

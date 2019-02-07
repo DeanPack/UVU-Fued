@@ -61,8 +61,8 @@ function deleteQuestionModal(id) {
 }
 
 function deleteQuestion(id){
-	console.log(`Delete ${id}`);
-	$('#deleteModalFooter').children().last().remove();
+	console.log(`Delete ${id}`)
+	$('#deleteModalFooter').children().last().remove()
 	$.ajax({
 		url : `../api/question?id=${id}`,
 		type : 'DELETE',
@@ -76,8 +76,8 @@ function deleteQuestion(id){
 }
 
 function saveUpdatedQuestion(id){
-	console.log(`Save ${id}`);
-    let questionJSON = getQuestionJSON("modalEditBody", id)
+	console.log(`Save ${id}`)
+    let questionJSON = getQuestionsEdit("modalEditBody", id, true)
 
 	$.ajax({
 		url : `../api/questions`,
@@ -94,33 +94,80 @@ function saveUpdatedQuestion(id){
 }
 
 function saveNewQuestion(){
-	console.log(`Save New Question`)
-	$('#newQuestionModal').modal('hide')
+    let questionJSON = getQuestionCreate("newQuestionModal")
+    
+    console.log(questionJSON)
+    
+	$.ajax({
+		url : `../api/questions`,
+		type : 'PUT',
+		dataType:'json',
+		data: questionJSON,
+		success : function(data) {
+			// Close the modal and remove the specific save button after the question has been updated from the database              
+			//$('#newQuestionModal').modal('hide')
+			//location.reload()
+		}
+	})
 }
 
-function getQuestionJSON(modal, id)
-{
-    var questionJSON = {};
+function getQuestionCreate(modal){
+	var questionJSON = {}
+
+    questionJSON['question'] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].value
+    
+
+    var answerArray = []
+    var divs = document.getElementById(modal).getElementsByTagName('div')
+    let inputs = divs[0].getElementsByTagName('input')
+    
+    console.log(inputs)
+    
+    for(let i = 0; i < inputs.length/2; i+=2)
+    {       
+        if (inputs[i].value.length > 0){
+        
+	        var answer = {}
+	        
+	        answer['text'] = inputs[i].value
+	        answer['pts'] = inputs[i+1].value
+	        
+	        answerArray.push(answer)
+        }
+    }
+    questionJSON['answer'] = answerArray
+    return questionJSON
+}
+
+function getQuestionsEdit(modal, id)
+{	
+    var questionJSON = {}
     //get the main div
 	questionJSON['_id'] = id
 
     //get the question
-    questionJSON['question'] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].value;
-    //start at two to skip headers
-    var answerArray = [];
-    var divs = document.getElementById(modal).getElementsByTagName('div');
-    for(i = 3; i < divs.length; i++)
+    questionJSON['question'] = document.getElementById(modal).getElementsByTagName('div')[0].getElementsByTagName('textarea')[0].value
+
+    var answerArray = []
+    var divs = document.getElementById(modal).getElementsByTagName('div')
+    for(let i = 3; i < divs.length; i++)
     {
-        var inputs = divs[i].getElementsByTagName('input');
-        var answer = {}
-        //answer
-        answer['text'] = inputs[0].value;
-        //points
-        answer['pts'] = inputs[1].value;
-        answerArray.push(answer);
+        var inputs = divs[i].getElementsByTagName('input')
+        
+        if (inputs){
+	        var answer = {}
+	        //answer
+	        if (inputs[0].value.length > 0){
+		        answer['text'] = inputs[0].value
+				//points
+	        	answer['pts'] = inputs[1].value
+				answerArray.push(answer)
+	        }
+        }
+
     }
-    questionJSON['answer'] = answerArray;
-    return questionJSON;
+    questionJSON['answer'] = answerArray
+    return questionJSON
 }
 
 $(document).ready(function() {
