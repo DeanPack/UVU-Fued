@@ -10,6 +10,7 @@ node server.js
 use UVU-Fued
 db.createCollection("questions")
 mongoimport --db UVU-Fued --collection questions --file questions.json --jsonArray
+brew services start mongodb
 ```
 
 ## Dependancies

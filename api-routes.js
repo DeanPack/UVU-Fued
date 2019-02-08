@@ -31,6 +31,17 @@ route.get('/questions', function (req, res) {
     })
 })
 
+//get a random question
+route.get('/question/random', function (req, res) {
+database.collection('questions').aggregate(
+        [ { $sample: { size: 1} } ]
+        ).forEach(function(result){
+    console.log(result._id)
+    res.writeHead(303, {Location: 'http://localhost:8080/api/question?id=' + result._id})
+    res.end()
+})
+})
+
 // Get question by id
 route.get('/question', function (req, res) {
 	let query = { _id: ObjectId(req['query']['id']) }
