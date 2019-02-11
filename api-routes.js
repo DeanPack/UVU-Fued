@@ -37,7 +37,7 @@ database.collection('questions').aggregate(
         [ { $sample: { size: 1} } ]
         ).forEach(function(result){
     console.log(result._id)
-    res.writeHead(303, {Location: 'http://localhost:8080/api/question?id=' + result._id})
+    res.writeHead(303, {Location: '/api/question?id=' + result._id})
     res.end()
 })
 })
