@@ -3,11 +3,12 @@
 const express = require('express')
 
 //load expess middleware
+const helmet = require('helmet')
 const compression = require('compression')
 const logger = require('morgan')
 const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
-// const helmet = require('helmet')
+
 
 const apiRoutes = require("./api-routes")
 
@@ -33,7 +34,7 @@ app.use(bodyParser.json())
 app.use('/api', apiRoutes)
 
 app.get('*', function(req, res) {
-	res.status(404).sendfile(`${__dirname}/web/404.html`)
+	res.status(404).sendFile(`${__dirname}/web/404.html`)
 })
 
 //start the server
@@ -42,6 +43,15 @@ const server = app.listen(8080, process.env.IP, 511, function() {
 
 })
 
+const io = require('socket.io')(server)
+
+io.on('connection', (socket) => {
+  console.log('User connected')
+  
+socket.on('disconnect', () => {
+    console.log('user disconnected')
+  })
+})
 
 
 //server close functions

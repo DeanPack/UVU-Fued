@@ -1,4 +1,4 @@
-var app = {
+let app = {
   version: 1,
   currentQ: 0,
   jsonFile:`http://${window.location.host}/api/questions`,
@@ -30,28 +30,28 @@ var app = {
            "</div>"),
   // Utility functions
   shuffle: function(array){
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex
     while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+      randomIndex = Math.floor(Math.random() * currentIndex)
+      currentIndex -= 1
+      temporaryValue = array[currentIndex]
+      array[currentIndex] = array[randomIndex]
+      array[randomIndex] = temporaryValue
     }
     return array;
   },
   jsonLoaded: function(data){
     console.clear()
     
-    var newData = []
+    let newData = []
     
-    for (var key in data) {
-	    var question = []
-	    var answer = []
+    for (let key in data) {
+	    let question = []
+	    let answer = []
 		
-		for (var ans in data[key]['answer']){
+		for (let ans in data[key]['answer']){
 			
-			var a = []
+			let a = []
 			a[0] = data[key]['answer'][ans]['text']
 			a[1] = data[key]['answer'][ans]['pts']
 			
@@ -71,25 +71,25 @@ var app = {
   },
   // Action functions
   makeQuestion: function(qNum){
-    var qText  = app.questions[qNum]
-    var qAnswr = app.allData[qText]
+    let qText  = app.questions[qNum]
+    let qAnswr = app.allData[qText]
 
     var qNum = qAnswr.length
-        qNum = (qNum<8)? 8: qNum;
-        qNum = (qNum % 2 != 0) ? qNum+1: qNum;
+        qNum = (qNum<8)? 8: qNum
+        qNum = (qNum % 2 != 0) ? qNum+1: qNum
     
-    var boardScore = app.board.find("#boardScore")
-    var question   = app.board.find(".question")
-    var col1       = app.board.find(".col1")
-    var col2       = app.board.find(".col2")
+    let boardScore = app.board.find("#boardScore")
+    let question   = app.board.find(".question")
+    let col1       = app.board.find(".col1")
+    let col2       = app.board.find(".col2")
     
     boardScore.html(0)
     question.html(qText.replace(/&x22;/gi,'"'))
     col1.empty()
     col2.empty()
 
-    for (var i = 0; i < qNum; i++){
-      var aLI     
+    for (let i = 0; i < qNum; i++){
+      let aLI     
       if(qAnswr[i]){
         aLI = $("<div class='cardHolder'>"+
                   "<div class='card'>"+
@@ -105,26 +105,26 @@ var app = {
       } else {
         aLI = $("<div class='cardHolder empty'><div></div></div>")
       }
-      var parentDiv = (i<(qNum/2))? col1: col2;
+      let parentDiv = (i<(qNum/2))? col1: col2
       $(aLI).appendTo(parentDiv)
     }  
     
-    var cardHolders = app.board.find('.cardHolder')
-    var cards       = app.board.find('.card')
-    var backs       = app.board.find('.back')
-    var cardSides   = app.board.find('.card>div')
+    let cardHolders = app.board.find('.cardHolder')
+    let cards       = app.board.find('.card')
+    let backs       = app.board.find('.back')
+    let cardSides   = app.board.find('.card>div')
 
-    TweenLite.set(cardHolders , {perspective:800});
-    TweenLite.set(cards       , {transformStyle:"preserve-3d"});
-    TweenLite.set(backs       , {rotationX:180});
-    TweenLite.set(cardSides   , {backfaceVisibility:"hidden"});
+    TweenLite.set(cardHolders , {perspective:800})
+    TweenLite.set(cards       , {transformStyle:"preserve-3d"})
+    TweenLite.set(backs       , {rotationX:180})
+    TweenLite.set(cardSides   , {backfaceVisibility:"hidden"})
 
     cards.data("flipped", false)
     
     function showCard(){
-      var card = $('.card', this)
-      var flipped = $(card).data("flipped")
-      var cardRotate = (flipped)?0:-180;
+      let card = $('.card', this)
+      let flipped = $(card).data("flipped")
+      let cardRotate = (flipped)?0:-180
       TweenLite.to(card, 1, {rotationX:cardRotate, ease:Back.easeOut})
       flipped = !flipped
       $(card).data("flipped", flipped)
@@ -133,44 +133,44 @@ var app = {
     cardHolders.on('click',showCard)
   },
   getBoardScore: function(){
-    var cards = app.board.find('.card')
-    var boardScore = app.board.find('#boardScore')
-    var currentScore = {var: boardScore.html()}
-    var score = 0
+    let cards = app.board.find('.card')
+    let boardScore = app.board.find('#boardScore')
+    let currentScore = {let: boardScore.html()}
+    let score = 0
     function tallyScore(){
       if($(this).data("flipped")){
-         var value = $(this).find("b").html()
+         let value = $(this).find("b").html()
          score += parseInt(value)
       }
     }
     $.each(cards, tallyScore)      
     TweenMax.to(currentScore, 1, {
-      var: score, 
+      let: score, 
       onUpdate: function () {
-        boardScore.html(Math.round(currentScore.var));
+        boardScore.html(Math.round(currentScore.let))
       },
       ease: Power3.easeOut,
     });
   },
   awardPoints: function(num){
     var num          = $(this).attr("data-team")
-    var boardScore   = app.board.find('#boardScore')
-    var currentScore = {var: parseInt(boardScore.html())}
-    var team         = app.board.find("#team"+num)
-    var teamScore    = {var: parseInt(team.html())}
-    var teamScoreUpdated = (teamScore.var + currentScore.var)
+    let boardScore   = app.board.find('#boardScore')
+    let currentScore = {let: parseInt(boardScore.html())}
+    let team         = app.board.find("#team"+num)
+    let teamScore    = {let: parseInt(team.html())}
+    let teamScoreUpdated = (teamScore.let + currentScore.let)
     TweenMax.to(teamScore, 1, {
-      var: teamScoreUpdated, 
+      let: teamScoreUpdated, 
       onUpdate: function () {
-        team.html(Math.round(teamScore.var));
+        team.html(Math.round(teamScore.let));
       },
       ease: Power3.easeOut,
     });
     
     TweenMax.to(currentScore, 1, {
-      var: 0, 
+      let: 0, 
       onUpdate: function () {
-        boardScore.html(Math.round(currentScore.var));
+        boardScore.html(Math.round(currentScore.let))
       },
       ease: Power3.easeOut,
     });
