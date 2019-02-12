@@ -1,40 +1,68 @@
-$(function(){
+let socket = io.connect()
+
+let urlParams = new URLSearchParams(window.location.search)
+let roomNum = urlParams.get('room')
+
+socket.on('connect', function() {
+  console.log("Connected to SocketIo Server")
+  
+  socket.emit('join', { type: "judge", room: roomNum })		
+
+})
+
+socket.on('command', function (data) {
+  console.log(data)
+  
+  if (data === "disconnect")
+  {
+   console.log("Server wants me to disconnect. Disconnecting")
+   socket.disconnect()
+ }
+})
+
+function sendQuestionID(question){
+	console.log("Sending updated question to server")
 	
-	let socket = io.connect(`${window.location.host}:3000`)
-	
-	let urlParams = new URLSearchParams(window.location.search)
-	let searchTerm = urlParams.get('search')
-	
-	let app = {
+	$.ajax({
+	url : `../api/question/question?question=${question}`,
+	type : 'GET',
+	dataType:'html',
+	success : function(data) {             
+		socket.emit('questionID',{ questionID: data, room: roomNum })
+	}
+})
+}
+
+let app = {
   version: 1,
   currentQ: 0,
   jsonFile:`http://${window.location.host}/api/questions`,
   board: $("<div class='gameBoard'>"+
-           
-             "<!--- Scores --->"+
-             "<div class='score' id='boardScore'>0</div>"+
-             "<div class='score' id='team1' >0</div>"+
-             "<div class='score' id='team2' >0</div>"+
-           
-             "<!--- Question --->"+
-             "<div class='questionHolder'>"+
-               "<span class='question'></span>"+
-             "</div>"+
-           
-             "<!--- Answers --->"+
-             "<div class='colHolder'>"+
-               "<div class='col1'></div>"+
-               "<div class='col2'></div>"+
-             "</div>"+
-           
-             "<!--- Buttons --->"+
-             "<div class='btnHolder'>"+
-               "<div id='awardTeam1' data-team='1' class='button'>Award Team 1</div>"+
-               "<div id='newQuestion' class='button'>New Question</div>"+
-               "<div id='awardTeam2' data-team='2'class='button'>Award Team 2</div>"+
-             "</div>"+
-           
-           "</div>"),
+   
+   "<!--- Scores --->"+
+   "<div class='score' id='boardScore'>0</div>"+
+   "<div class='score' id='team1' >0</div>"+
+   "<div class='score' id='team2' >0</div>"+
+   
+   "<!--- Question --->"+
+   "<div class='questionHolder'>"+
+   "<span class='question'></span>"+
+   "</div>"+
+   
+   "<!--- Answers --->"+
+   "<div class='colHolder'>"+
+   "<div class='col1'></div>"+
+   "<div class='col2'></div>"+
+   "</div>"+
+   
+   "<!--- Buttons --->"+
+   "<div class='btnHolder'>"+
+   "<div id='awardTeam1' data-team='1' class='button'>Award Team 1</div>"+
+   "<div id='newQuestion' class='button'>New Question</div>"+
+   "<div id='awardTeam2' data-team='2'class='button'>Award Team 2</div>"+
+   "</div>"+
+   
+   "</div>"),
   // Utility functions
   shuffle: function(array){
     let currentIndex = array.length, temporaryValue, randomIndex
@@ -48,39 +76,40 @@ $(function(){
     return array;
   },
   jsonLoaded: function(data){
-    console.clear()
-    
     let newData = []
     
     for (let key in data) {
-	    let question = []
-	    let answer = []
-		
-		for (let ans in data[key]['answer']){
-			let a = []
-			a[0] = data[key]['answer'][ans]['text']
-			a[1] = data[key]['answer'][ans]['pts']
-			
-			answer.push(a)
-		}
-		newData[data[key]['question']] = answer
-	}
-    
-    
-    app.allData = newData
-    app.questions = Object.keys(newData)
-    app.shuffle(app.questions)
-    app.makeQuestion(app.currentQ)
-    $('body').append(app.board)
-  },
+     let question = []
+     let answer = []
+     
+     for (let ans in data[key]['answer']){
+       let a = []
+       a[0] = data[key]['answer'][ans]['text']
+       a[1] = data[key]['answer'][ans]['pts']
+       
+       answer.push(a)
+     }
+     newData[data[key]['question']] = answer
+   }
+   
+   
+   app.allData = newData
+   app.questions = Object.keys(newData)
+   app.shuffle(app.questions)
+   app.makeQuestion(app.currentQ)
+   $('body').append(app.board)
+ },
   // Action functions
   makeQuestion: function(qNum){
     let qText  = app.questions[qNum]
+    
+    sendQuestionID(qText)
+    
     let qAnswr = app.allData[qText]
 
     var qNum = qAnswr.length
-        qNum = (qNum<8)? 8: qNum
-        qNum = (qNum % 2 != 0) ? qNum+1: qNum
+    qNum = (qNum<8)? 8: qNum
+    qNum = (qNum % 2 != 0) ? qNum+1: qNum
     
     let boardScore = app.board.find("#boardScore")
     let question   = app.board.find(".question")
@@ -96,16 +125,16 @@ $(function(){
       let aLI     
       if(qAnswr[i]){
         aLI = $("<div class='cardHolder'>"+
-                  "<div class='card'>"+
-                    "<div class='front'>"+
-                      "<span class='DBG'>"+(i+1)+"</span>"+
-                    "</div>"+
-                    "<div class='back DBG'>"+
-                      "<span>"+qAnswr[i][0]+"</span>"+
-                      "<b class='LBG'>"+qAnswr[i][1]+"</b>"+
-                    "</div>"+
-                  "</div>"+
-                "</div>")
+          `<div id='card${i}' class='card'>`+
+          "<div class='front'>"+
+          "<span class='DBG'>"+(i+1)+"</span>"+
+          "</div>"+
+          "<div class='back DBG'>"+
+          "<span>"+qAnswr[i][0]+"</span>"+
+          "<b class='LBG'>"+qAnswr[i][1]+"</b>"+
+          "</div>"+
+          "</div>"+
+          "</div>")
       } else {
         aLI = $("<div class='cardHolder empty'><div></div></div>")
       }
@@ -126,12 +155,13 @@ $(function(){
     cards.data("flipped", false)
     
     function showCard(){
-      let card = $('.card', this)
+      let card = $('.card', this) 
       let flipped = $(card).data("flipped")
       let cardRotate = (flipped)?0:-180;
       TweenLite.to(card, 1, {rotationX:cardRotate, ease:Back.easeOut})
       flipped = !flipped
       $(card).data("flipped", flipped)
+      socket.emit('commands', { room: roomNum, command:{cardFlip : card[0].id} })
       app.getBoardScore()
     }
     cardHolders.on('click',showCard)
@@ -143,46 +173,50 @@ $(function(){
     let score = 0
     function tallyScore(){
       if($(this).data("flipped")){
-         let value = $(this).find("b").html()
-         score += parseInt(value)
-      }
-    }
-    $.each(cards, tallyScore)      
-    TweenMax.to(currentScore, 1, {
-      let: score, 
-      onUpdate: function () {
-        boardScore.html(Math.round(currentScore.let))
-      },
-      ease: Power3.easeOut,
-    });
-  },
-  awardPoints: function(num){
-    var num          = $(this).attr("data-team")
-    let boardScore   = app.board.find('#boardScore')
-    let currentScore = {let: parseInt(boardScore.html())}
-    let team         = app.board.find("#team"+num)
-    let teamScore    = {let: parseInt(team.html())}
-    let teamScoreUpdated = (teamScore.let + currentScore.let)
-    TweenMax.to(teamScore, 1, {
-      let: teamScoreUpdated, 
-      onUpdate: function () {
-        team.html(Math.round(teamScore.let))
-      },
-      ease: Power3.easeOut,
-    });
-    
-    TweenMax.to(currentScore, 1, {
-      let: 0, 
-      onUpdate: function () {
-        boardScore.html(Math.round(currentScore.let))
-      },
-      ease: Power3.easeOut,
-    });
-  },
-  changeQuestion: function(){
-    app.currentQ++
-    app.makeQuestion(app.currentQ)
-  },
+       let value = $(this).find("b").html()
+       score += parseInt(value)
+     }
+   }
+   $.each(cards, tallyScore)      
+   TweenMax.to(currentScore, 1, {
+    let: score, 
+    onUpdate: function () {
+      boardScore.html(Math.round(currentScore.let))
+    },
+    ease: Power3.easeOut,
+  });
+ },
+ awardPoints: function(num){
+  var num          = $(this).attr("data-team")
+  let boardScore   = app.board.find('#boardScore')
+  let currentScore = {let: parseInt(boardScore.html())}
+  let team         = app.board.find("#team"+num)
+  let teamScore    = {let: parseInt(team.html())}
+  let teamScoreUpdated = (teamScore.let + currentScore.let)
+  console.log(team[0].id)
+  
+  socket.emit('points',{room:roomNum, points:{teamID:team[0].id, pts:teamScoreUpdated}})
+  
+  TweenMax.to(teamScore, 1, {
+    let: teamScoreUpdated, 
+    onUpdate: function () {
+      team.html(Math.round(teamScore.let))
+    },
+    ease: Power3.easeOut,
+  });
+  
+  TweenMax.to(currentScore, 1, {
+    let: 0, 
+    onUpdate: function () {
+      boardScore.html(Math.round(currentScore.let))
+    },
+    ease: Power3.easeOut,
+  });
+},
+changeQuestion: function(){
+  app.currentQ++
+  app.makeQuestion(app.currentQ)
+},
   // Inital function
   init: function(){
     $.getJSON(app.jsonFile, app.jsonLoaded)
@@ -192,4 +226,4 @@ $(function(){
   }  
 }
 app.init()
-})
+

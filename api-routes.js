@@ -50,6 +50,14 @@ route.get('/question', function (req, res) {
     })
 })
 
+// Get question by question
+route.get('/question/question', function (req, res) {
+	let query = { question: req['query']['question'] }
+	database.collection('questions').findOne(query, (err, results) => {
+		res.send(results["_id"])
+    })
+})
+
 // Get question by id return HTML for modal
 route.get('/question/modal', function (req, res) {
 	let query = { _id: ObjectId(req['query']['id']) }
