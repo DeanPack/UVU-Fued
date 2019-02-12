@@ -1,7 +1,7 @@
 var app = {
   version: 1,
   currentQ: 0,
-  jsonFile:"https://s3-us-west-2.amazonaws.com/s.cdpn.io/40041/FF3.json",
+  jsonFile:`http://${window.location.host}/api/questions`,
   board: $("<div class='gameBoard'>"+
            
              "<!--- Scores --->"+
@@ -42,8 +42,29 @@ var app = {
   },
   jsonLoaded: function(data){
     console.clear()
-    app.allData   = data
-    app.questions = Object.keys(data)
+    
+    var newData = []
+    
+    for (var key in data) {
+	    var question = []
+	    var answer = []
+		
+		for (var ans in data[key]['answer']){
+			
+			var a = []
+			a[0] = data[key]['answer'][ans]['text']
+			a[1] = data[key]['answer'][ans]['pts']
+			
+			answer.push(a)
+			
+		}
+		newData[data[key]['question']] = answer
+	}
+    
+    
+    app.allData = newData
+    console.log(newData)
+    app.questions = Object.keys(newData)
     app.shuffle(app.questions)
     app.makeQuestion(app.currentQ)
     $('body').append(app.board)
@@ -167,4 +188,3 @@ var app = {
   }  
 }
 app.init()
-//http://www.qwizx.com/gssfx/usa/ff.htm
