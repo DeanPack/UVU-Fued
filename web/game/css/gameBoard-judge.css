@@ -1,0 +1,23 @@
+.gameBoard .cardHolder .front {
+  font-size: 25px;
+  text-align: left;
+}
+.gameBoard .cardHolder .front span {
+  position: absolute;
+  border-radius: 50%;
+  line-height: 50px;
+  left: 5px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: block;
+  margin: auto;
+}
+
+#roomCode {
+	color: black;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	width: 150px;
+}
