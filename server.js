@@ -64,25 +64,19 @@ io.on('connection', (socket) => {
 
 					socket.emit('command', 'startGame')
 				}
-			}else if(type === "screen"){
+			}else if(data.type === "screen"){
 				console.log(`screen joined room ${data.room}`)
 				socket.join(data.room);
 				games[data.room]["screen"] = socket
-
-				if (games[data.room][team1Pts] > 0 || games[data.room][team2Pts] > 0)
-				{
-					console.log("Game already in progress. Sending current game info to client")
-					socket.emit('gameInProgress',games[room]["gameData"])
-				}
-
-				socket.emit('command', 'startGame')
+				console.log("Game already in progress. Sending current game info to client")
+				socket.emit('gameInProgress',games[data.room]["gameData"])
 
 			}else{
 				console.log("Unknown client type, disconnect from client")
 				socket.disconnect(true)
 			}
 		}else{
-			console.log("Game does not exists")
+			console.log("Game does not exist")
 			socket.emit('er',"noGameFound")
 		}
 	})
@@ -104,9 +98,9 @@ io.on('connection', (socket) => {
 
 	socket.on('commands', function(data) {
 		console.log(`Sending command ${Object.keys(data.command)} to room ${data.room}`)
-		socket.to('data.room').emit('questionID', data.command);
+		socket.to(data.room).emit('command', data.command);
 		
-		// Keep track of carde flips
+		// Keep track of card flips
 		if (data.command.cardFlip)
 		{
 			let cardsFlipped = []
@@ -183,6 +177,12 @@ app.get('/game/newgame', function(req, res) {
 
 	res.redirect(`/game/judge.html?room=${room}`)
 
+})
+
+// Join a game
+app.get('/game/join', function(req,res) {
+    //see if the game already exists
+    res.redirect(`/game/client.html?room=${req['query']['code']}`)
 })
 
 app.get('*', function(req, res) {
