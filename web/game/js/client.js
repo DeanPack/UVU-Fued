@@ -47,9 +47,14 @@ socket.on('command', function (data) {
     if(data.cardFlip)
         {
             var cardFlipped = document.getElementById(data.cardFlip)
-            app.showCard(cardFlipped);
+            showCard(cardFlipped)
         }
 })
+          //Call this when socket gets card flip
+function showCard(cardFlipped){
+    let card = cardFlipped
+    TweenLite.to(card, 1, {rotationX:-180, ease:Back.easeOut})
+}
 
 function loadGame(data){
     var id = data.questionID
@@ -177,7 +182,6 @@ function loadGame(data){
 	      TweenLite.to(card, 1, {rotationX:cardRotate, ease:Back.easeOut})
 	      flipped = !flipped
 	      $(card).data("flipped", flipped)
-	      socket.emit('commands', { room: roomNum, command:{cardFlip : card[0].id} })
 	      app.getBoardScore()
 	    }
 	    //cardHolders.on('click',showCard)
