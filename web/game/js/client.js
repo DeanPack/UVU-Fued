@@ -21,13 +21,6 @@ socket.on('er', function(data) {
 	    window.location.href = '/game/new_game.html'
 	    
 	}
-	if (data === "alreadyJudge"){
-	    console.log("There is already a judge in this game!")
-	    socket.disconnect()
-	    
-	    alert('There is already a judge in this game!');
-	    window.location.href = '/game/join.html'
-	}
 
 })
 
@@ -46,15 +39,10 @@ socket.on('command', function (data) {
     //cardflip
     if(data.cardFlip)
         {
-            var cardFlipped = document.getElementById(data.cardFlip)
-            showCard(cardFlipped)
+	        console.log(`#${data.cardFlip}Holder`)
+            $(`#${data.cardFlip}`).trigger('flip')
         }
 })
-          //Call this when socket gets card flip
-function showCard(cardFlipped){
-    let card = cardFlipped
-    TweenLite.to(card, 1, {rotationX:-180, ease:Back.easeOut})
-}
 
 function loadGame(data){
     var id = data.questionID
@@ -175,8 +163,8 @@ function loadGame(data){
 	    cards.data("flipped", false)
 	    
           //Call this when socket gets card flip
-	    function showCard(cardFlipped){
-	      let card = $('.card', cardFlipped) 
+	    function showCard(){
+	      let card = $('.card', this) 
 	      let flipped = $(card).data("flipped")
 	      let cardRotate = (flipped)?0:-180;
 	      TweenLite.to(card, 1, {rotationX:cardRotate, ease:Back.easeOut})
@@ -184,7 +172,7 @@ function loadGame(data){
 	      $(card).data("flipped", flipped)
 	      app.getBoardScore()
 	    }
-	    //cardHolders.on('click',showCard)
+	    cardHolders.on('flip',showCard)
 	  },
 	  getBoardScore: function(){
 	    let cards = app.board.find('.card')
