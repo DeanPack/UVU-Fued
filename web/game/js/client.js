@@ -2,12 +2,12 @@ let socket = io.connect()
 let app;
 let urlParams = new URLSearchParams(window.location.search)
 let roomNum = urlParams.get('room')
-
+var team1Score
+var team2Score
 socket.on('connect', function() {
   console.log("Connected to SocketIo Server")
   
   socket.emit('join', { type: "screen", room: roomNum })		
-
 })
 
 socket.on('er', function(data) {
@@ -29,11 +29,9 @@ socket.on('gameInProgress', function (data) {
 
 socket.on('questionID', function(data) {
     console.log(data)
-    
-    //Need to remove the whole board except the points somehow
-    $("div.gameBoard").remove()
-
-    loadGame(data)
+    setTimeout(function() {
+        loadGame(data, document.getElementById('team1').innerHTML, document.getElementById('team2').innerHTML)
+    }, 1000)
 })
 
 socket.on('command', function (data) {
@@ -64,7 +62,8 @@ function awardPoints(teamId, pts) {
 	  let currentScore = {let: pts}
       console.log(currentScore)
 	  let team         = document.getElementById(teamId)
-	  let teamScore    = {let: parseInt(team.innerHTML)}
+	  let teamScore    = {let: parseInt(0)}
+      console.log(teamScore)
 	  let teamScoreUpdated = (teamScore.let + currentScore.let)
       
 	  TweenMax.to(teamScore, 1, {
@@ -84,7 +83,16 @@ function awardPoints(teamId, pts) {
 	  });
 	}
 
-function loadGame(data){
+function loadGame(data, team1pts, team2pts){
+    var t1pts = 0
+    var t2pts = 0
+    if(team1pts)
+        {
+            console.log("here")
+            t1pts = team1pts
+            t2pts = team2pts
+        }
+    $("div.gameBoard").remove()
     var id = data.questionID
     if(!id)
         id = data
@@ -98,8 +106,8 @@ function loadGame(data){
 	   
 	   `<!--- Scores --->`+
 	   `<div class='score' id='boardScore'>0</div>`+
-	   `<div class='score' id='team1' >0</div>`+
-	   `<div class='score' id='team2' >0</div>`+
+	   `<div class='score' id='team1' >${t1pts}</div>`+
+	   `<div class='score' id='team2' >${t2pts}</div>`+
 	   
 	   `<!--- Question --->`+
 	   `<div class='questionHolder'>`+
