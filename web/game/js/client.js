@@ -27,6 +27,15 @@ socket.on('gameInProgress', function (data) {
     loadGame(data)
 })
 
+socket.on('questionID', function(data) {
+    console.log(data)
+    
+    //Need to remove the whole board except the points somehow
+    $("div.gameBoard").remove()
+
+    loadGame(data)
+})
+
 socket.on('command', function (data) {
   console.log(data)
   
@@ -56,10 +65,8 @@ function awardPoints(teamId, pts) {
       console.log(currentScore)
 	  let team         = document.getElementById(teamId)
 	  let teamScore    = {let: parseInt(team.innerHTML)}
-      console.log(teamScore)
 	  let teamScoreUpdated = (teamScore.let + currentScore.let)
-      console.log(teamScoreUpdated)
-	  	  
+      
 	  TweenMax.to(teamScore, 1, {
 	    let: teamScoreUpdated, 
 	    onUpdate: function () {
@@ -75,11 +82,12 @@ function awardPoints(teamId, pts) {
 	    },
 	    ease: Power3.easeOut,
 	  });
-	  //app.changeQuestion()
 	}
 
 function loadGame(data){
     var id = data.questionID
+    if(!id)
+        id = data
     id = id.replace(/"/g,'')
     console.log(id)
 	app = {

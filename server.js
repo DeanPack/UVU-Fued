@@ -82,13 +82,13 @@ io.on('connection', (socket) => {
 	})
 
 	socket.on('questionID', function(data) {
-		console.log(`Updating Question ID for room ${data.room}`)
+		console.log(`Updating Q1uestion ID for room ${data.room}`)
 
 		games[data.room]["gameData"]["questionID"] = data.questionID
 
 		console.log("Sending updated question to clients")
 
-		socket.to('data.room').emit('questionID', data.questionID);
+		socket.to(data.room).emit('questionID', data.questionID);
 
 		// New question, if there are any recorded card flips delete them
 		if(games[data.room]["gameData"]["cardFlips"]){
