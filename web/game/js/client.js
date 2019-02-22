@@ -19,7 +19,6 @@ socket.on('er', function(data) {
 	    
 	    alert('This room is not found! Please create a new game if you want to play.');
 	    window.location.href = '/game/new_game.html'
-	    
 	}
 
 })
@@ -43,6 +42,41 @@ socket.on('command', function (data) {
             $(`#${data.cardFlip}`).trigger('flip')
         }
 })
+socket.on('points', function (data) {
+    data=data.replace('{','')
+    data = data.replace('}', '')
+    var points = data.split(':')
+    console.log(points[0])
+    awardPoints(points[0], points[1])
+})
+
+function awardPoints(teamId, pts) {
+	  let boardScore   = document.getElementById('boardScore')
+	  let currentScore = {let: pts}
+      console.log(currentScore)
+	  let team         = document.getElementById(teamId)
+	  let teamScore    = {let: parseInt(team.innerHTML)}
+      console.log(teamScore)
+	  let teamScoreUpdated = (teamScore.let + currentScore.let)
+      console.log(teamScoreUpdated)
+	  	  
+	  TweenMax.to(teamScore, 1, {
+	    let: teamScoreUpdated, 
+	    onUpdate: function () {
+	      team.innerHTML = Math.round(teamScore.let)
+	    },
+	    ease: Power3.easeOut,
+	  });
+	  
+	  TweenMax.to(currentScore, 1, {
+	    let: 0, 
+	    onUpdate: function () {
+	      boardScore.innerHTML = Math.round(currentScore.let)
+	    },
+	    ease: Power3.easeOut,
+	  });
+	  //app.changeQuestion()
+	}
 
 function loadGame(data){
     var id = data.questionID

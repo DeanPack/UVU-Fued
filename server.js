@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
 		games[data.room]["gameData"][data.points.teamID] = data.points.pts
 
 		console.log(`Team 1: ${games[data.room]["gameData"]['team1']} Team 2: ${games[data.room]["gameData"]['team2']}`)
-        socket.to(data.room).emit('{data.points.teamID:data.points.pts}')
+        socket.to(data.room).emit('points',`{${data.points.teamID}:${data.points.pts}}`)
 
 	})
 
